@@ -1,0 +1,36 @@
+<!-- Sender HTML file -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sender</title>
+  <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+</head>
+<body>
+  <h1>Sender</h1>
+  <script>
+    // Connect to the PeerJS server with a custom ID for the sender
+    const myPeer = new Peer('browser-peer-id', {
+      secure: true,
+      host: 'peer-server-rtc.herokuapp.com',
+      port: 443
+    });
+
+    // When the PeerJS connection is open, create a data connection to the receiver
+    myPeer.on('open', (id) => {
+      console.log('Connected to PeerJS server with ID:', id);
+      const conn = myPeer.connect('mobile-peer-id');
+      
+      // When the data connection is open, send a message to the receiver
+      conn.on('open', () => {
+        console.log('Data connection with receiver opened.');
+        conn.send('Hello receiver!');
+      });
+
+      // When the data connection receives a message, log it to the console
+      conn.on('data', (data) => {
+        console.log('Received message:', data);
+      });
+    });
+  </script>
+</body>
+</html>
